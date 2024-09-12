@@ -6,7 +6,7 @@
 ;; URL: https://gitlab.com/lckarssen/incus-tramp.git
 ;; Keywords: incus, convenience
 ;; Version: 0.1
-;; Package-Requires: ((emacs "24.4") (cl-lib "0.6"))
+;; Package-Requires: ((emacs "24.4"))
 
 ;; This code is basically a copy of
 ;; lxd-tramp by Yc.S <onixie@gmail.com> from
