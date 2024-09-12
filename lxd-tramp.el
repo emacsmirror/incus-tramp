@@ -1,12 +1,16 @@
-;;; lxd-tramp.el --- TRAMP integration for LXD containers -*- lexical-binding: t; -*-
+;;; incus-tramp.el --- TRAMP integration for Incus containers -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018 Yc.S <onixie@gmail.com>
 
-;; Author: Yc.S <onixie@gmail.com>
-;; URL: https://github.com/onixie/lxd-tramp.git
-;; Keywords: lxd, lxc, convenience
+;; Author: Lennart C. Karssen <lennart@karssen.org>
+;; URL: https://gitlab.com/lckarssen/incus-tramp.git
+;; Keywords: incus, convenience
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "24.4") (cl-lib "0.6"))
+
+;; This code is basically a copy of
+;; lxd-tramp by Yc.S <onixie@gmail.com> from
+;; https://github.com/onixie/lxd-tramp.git adapted to Incus.
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -27,13 +31,13 @@
 
 ;;; Commentary:
 ;;
-;; `lxd-tramp' offers a TRAMP method for LXD containers
+;; `incus-tramp' offers a TRAMP method for Incus containers
 ;;
 ;; ## Usage
 ;;
-;; Offers the TRAMP method `lxd` to access running containers
+;; Offers the TRAMP method `incus` to access running containers
 ;;
-;;     C-x C-f /lxd:user@container:/path/to/file
+;;     C-x C-f /incus:user@container:/path/to/file
 ;;
 ;;     where
 ;;       user           is the user that you want to use (optional)
@@ -46,49 +50,49 @@
 (require 'tramp)
 (require 'subr-x)
 
-(defgroup lxd-tramp nil
-  "TRAMP integration for LXD containers."
-  :prefix "lxd-tramp-"
+(defgroup incus-tramp nil
+  "TRAMP integration for Incus containers."
+  :prefix "incus-tramp-"
   :group 'applications
-  :link '(url-link :tag "GitHub" "https://github.com/onixie/lxd-tramp.git")
-  :link '(emacs-commentary-link :tag "Commentary" "lxd-tramp"))
+  :link '(url-link :tag "GitLab" "https://gitlab.com/lckarssen/incus-tramp.git")
+  :link '(emacs-commentary-link :tag "Commentary" "incus-tramp"))
 
-(defcustom lxd-tramp-lxc-executable "lxc"
-  "Path to lxc executable."
+(defcustom incus-tramp-incus-executable "incus"
+  "Path to the incus executable."
   :type 'string
-  :group 'lxd-tramp)
+  :group 'incus-tramp)
 
 ;;;###autoload
-(defconst lxd-tramp-completion-function-alist
-  '((lxd-tramp--parse-running-containers  ""))
-  "Default list of (FUNCTION FILE) pairs to be examined for lxd method.")
+(defconst incus-tramp-completion-function-alist
+  '((incus-tramp--parse-running-containers  ""))
+  "Default list of (FUNCTION FILE) pairs to be examined for incus method.")
 
 ;;;###autoload
-(defconst lxd-tramp-method "lxd"
-  "Method to connect to LXD containers.")
+(defconst incus-tramp-method "incus"
+  "Method to connect to Incus containers.")
 
-(defun lxd-tramp--running-containers ()
+(defun incus-tramp--running-containers ()
   "Collect running container names."
   (cl-rest
-   (cl-loop for line in (ignore-errors (process-lines lxd-tramp-lxc-executable "list" "--columns=n")) ; Note: --format=csv only exists after version 2.13
+   (cl-loop for line in (ignore-errors (process-lines incus-tramp-incus-executable "list" "--columns=n")) ; Note: --format=csv only exists after version 2.13
             for count from 1
             when (cl-evenp count) collect (string-trim (substring line 1 -1)))))
 
-(defun lxd-tramp--parse-running-containers (&optional ignored)
+(defun incus-tramp--parse-running-containers (&optional ignored)
   "Return a list of (user host) tuples.
 
 TRAMP calls this function with a filename which is IGNORED.  The
-user is an empty string because the lxd TRAMP method uses bash
+user is an empty string because the incus TRAMP method uses bash
 to connect to the default user containers."
-  (cl-loop for name in (lxd-tramp--running-containers)
+  (cl-loop for name in (incus-tramp--running-containers)
            collect (list "" name)))
 
 ;;;###autoload
-(defun lxd-tramp-add-method ()
-  "Add lxd tramp method."
+(defun incus-tramp-add-method ()
+  "Add incus tramp method."
   (add-to-list 'tramp-methods
-               `(,lxd-tramp-method
-                 (tramp-login-program ,lxd-tramp-lxc-executable)
+               `(,incus-tramp-method
+                 (tramp-login-program ,incus-tramp-incus-executable)
                  (tramp-login-args (("exec") ("%h") ("--") ("su - %u")))
                  (tramp-remote-shell "/bin/sh")
                  (tramp-remote-shell-args ("-i" "-c")))))
@@ -96,13 +100,13 @@ to connect to the default user containers."
 ;;;###autoload
 (eval-after-load 'tramp
   '(progn
-     (lxd-tramp-add-method)
-     (tramp-set-completion-function lxd-tramp-method lxd-tramp-completion-function-alist)))
+     (incus-tramp-add-method)
+     (tramp-set-completion-function incus-tramp-method incus-tramp-completion-function-alist)))
 
-(provide 'lxd-tramp)
+(provide 'incus-tramp)
 
 ;; Local Variables:
 ;; indent-tabs-mode: nil
 ;; End:
 
-;;; lxd-tramp.el ends here
+;;; incus-tramp.el ends here
