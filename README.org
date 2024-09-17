@@ -3,8 +3,21 @@
 
 It uses the =incus= command line tool to login to containers and list
 running containers (for completion purposes).
+** Configuration
+Add the following =use-package= statement to your =~/.emacs= (or =init.el=
+file) to load the package:
+#+begin_src emacs-lisp
+  (use-package incus-tramp
+    :ensure nil
+    :after tramp
+    :config
+    (incus-tramp-add-method)
+    (tramp-set-completion-function incus-tramp-method
+        '((incus-tramp-completion-function-alist)))
+    )
+#+end_src
 ** Usage
-Offers the TRAMP method =incus= to access running containers
+This package offers the TRAMP method =incus= to access running containers:
 #+begin_example
     C-x C-f /incus:user@container:/path/to/file
 
@@ -16,5 +29,5 @@ Offers the TRAMP method =incus= to access running containers
 Thanks to [[https://github.com/onixie/lxd-tramp][/onixie/]], author of =lxd-tramp=, on which this package is
 based.
 
-Thanks to[[https://github.com/montag451/lxc-tramp][/monag451/]], the author of =lxc-tramp.el= on which =lxd-tramp.el=
+Thanks to [[https://github.com/montag451/lxc-tramp][/monag451/]], the author of =lxc-tramp.el= on which =lxd-tramp.el=
 was based.
