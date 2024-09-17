@@ -1,16 +1,15 @@
 ;;; incus-tramp.el --- TRAMP integration for Incus containers -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018 Yc.S <onixie@gmail.com>
+;; Copyright (C) 2024 Lennart C. Karssen <lennart@karssen.org>
 
 ;; Author: Lennart C. Karssen <lennart@karssen.org>
 ;; URL: https://gitlab.com/lckarssen/incus-tramp.git
 ;; Keywords: incus, convenience
-;; Version: 0.1
+;; Version: 1.1
 ;; Package-Requires: ((emacs "24.4"))
 
-;; This code is basically a copy of
-;; lxd-tramp by Yc.S <onixie@gmail.com> from
-;; https://github.com/onixie/lxd-tramp.git adapted to Incus.
+;; This code is based on lxd-tramp by Yc.S <onixie@gmail.com> from
+;; https://github.com/onixie/lxd-tramp.git, adapted to Incus.
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -64,28 +63,27 @@
 
 ;;;###autoload
 (defconst incus-tramp-completion-function-alist
-  '((incus-tramp--parse-running-containers  ""))
+  '((incus-tramp--list-containers))
   "Default list of (FUNCTION FILE) pairs to be examined for incus method.")
 
 ;;;###autoload
 (defconst incus-tramp-method "incus"
   "Method to connect to Incus containers.")
 
-(defun incus-tramp--running-containers ()
-  "Collect running container names."
-  (cl-rest
-   (cl-loop for line in (ignore-errors (process-lines incus-tramp-incus-executable "list" "--columns=n")) ; Note: --format=csv only exists after version 2.13
-            for count from 1
-            when (cl-evenp count) collect (string-trim (substring line 1 -1)))))
+(defun incus-tramp--parse-containers (incus-output)
+  "Return a list of user (nil) and container combinations.
 
-(defun incus-tramp--parse-running-containers (&optional ignored)
-  "Return a list of (user host) tuples.
+INCUS-OUTPUT is the output of the incus --list command."
+    (list nil
+          (car (split-string incus-output "[[:space:]]+" t))))
 
-TRAMP calls this function with a filename which is IGNORED.  The
-user is an empty string because the incus TRAMP method uses bash
-to connect to the default user containers."
-  (cl-loop for name in (incus-tramp--running-containers)
-           collect (list "" name)))
+(defun incus-tramp--list-running-containers ()
+  "Get list of running containers."
+  (mapcar #'incus-tramp--parse-containers (ignore-errors (process-lines
+                                                       "incus" "list"
+                                                       "--columns=n"
+                                                       "--format=csv"
+                                                       "state=running"))))
 
 ;;;###autoload
 (defun incus-tramp-add-method ()
@@ -97,11 +95,6 @@ to connect to the default user containers."
                  (tramp-remote-shell "/bin/sh")
                  (tramp-remote-shell-args ("-i" "-c")))))
 
-;;;###autoload
-(eval-after-load 'tramp
-  '(progn
-     (incus-tramp-add-method)
-     (tramp-set-completion-function incus-tramp-method incus-tramp-completion-function-alist)))
 
 (provide 'incus-tramp)
 
