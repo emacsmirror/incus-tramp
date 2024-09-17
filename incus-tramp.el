@@ -1,16 +1,15 @@
 ;;; incus-tramp.el --- TRAMP integration for Incus containers -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018 Yc.S <onixie@gmail.com>
+;; Copyright (C) 2024 Lennart C. Karssen <lennart@karssen.org>
 
 ;; Author: Lennart C. Karssen <lennart@karssen.org>
 ;; URL: https://gitlab.com/lckarssen/incus-tramp.git
 ;; Keywords: incus, convenience
-;; Version: 0.1
+;; Version: 1.1
 ;; Package-Requires: ((emacs "24.4"))
 
-;; This code is basically a copy of
-;; lxd-tramp by Yc.S <onixie@gmail.com> from
-;; https://github.com/onixie/lxd-tramp.git adapted to Incus.
+;; This code is based on lxd-tramp by Yc.S <onixie@gmail.com> from
+;; https://github.com/onixie/lxd-tramp.git, adapted to Incus.
 
 ;; This file is NOT part of GNU Emacs.
 

@@ -1,0 +1,20 @@
+* incus-tramp - TRAMP integration for Incus containers
+=incus-tramp.el= offers an [[https://www.gnu.org/software/emacs/][Emacs]] [[https://www.gnu.org/software/tramp/][TRAMP]] method for [[https://linuxcontainers.org/incus/][Incus]] containers.
+
+It uses the =incus= command line tool to login to containers and list
+running containers (for completion purposes).
+** Usage
+Offers the TRAMP method =incus= to access running containers
+#+begin_example
+    C-x C-f /incus:user@container:/path/to/file
+
+    where
+      user           is the user that you want to use (optional)
+      container      is the id or name of the container
+#+end_example
+
+Thanks to [[https://github.com/onixie/lxd-tramp][/onixie/]], author of =lxd-tramp=, on which this package is
+based.
+
+Thanks to[[https://github.com/montag451/lxc-tramp][/monag451/]], the author of =lxc-tramp.el= on which =lxd-tramp.el=
+was based.
