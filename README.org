@@ -1,3 +1,4 @@
+[[https://melpa.org/#/incus-tramp][file:https://melpa.org/packages/incus-tramp-badge.svg]]
 * incus-tramp - TRAMP integration for Incus containers
 =incus-tramp.el= offers an [[https://www.gnu.org/software/emacs/][Emacs]] [[https://www.gnu.org/software/tramp/][TRAMP]] method for [[https://linuxcontainers.org/incus/][Incus]] containers.
 
